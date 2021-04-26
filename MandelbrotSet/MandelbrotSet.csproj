@@ -46,6 +46,8 @@
     <Compile Include="Calculation.cs" />
     <Compile Include="ComplexNumber.cs" />
     <Compile Include="DistributedComputation.cs" />
+    <Compile Include="GeneratePPM.cs" />
+    <Compile Include="LoadData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Visualising.cs" />
@@ -55,9 +57,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="imagegeneration.py" />
     <Content Include="main.py" />
-    <Content Include="loaddata.py" />
     <Content Include="visualise-mandelbrot.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

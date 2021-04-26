@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace MandelbrotSet
 {
@@ -16,7 +13,8 @@ namespace MandelbrotSet
             Standard,
             DontVisualise,
             Distributed_Server,
-            Distributed_Client
+            Distributed_Client,
+            Generate_PPM
         }
 
         private static void Main(string[] args)
@@ -27,7 +25,37 @@ namespace MandelbrotSet
             ushort maximumRecursionDepth;
             ulong bufferSize;
 
-            if (args.Length == 9) //Specifying by corners and step size
+            if (args.Length == 3)
+            {
+
+                mode = ParseMode(args[0]);
+
+                if (mode != Mode.Generate_PPM)
+                {
+                    Console.WriteLine("Only use 3 arguments when trying to generate PPM");
+                    return;
+                }
+
+                string dataFileName = args[1];
+
+                if (!File.Exists(dataFileName))
+                {
+                    Console.WriteLine("Passed data file name doesn't exist");
+                    return;
+                }
+
+                string outputFileName = args[2];
+
+                Console.WriteLine("Starting PPM generation");
+
+                GeneratePPM.Generate(dataFileName, outputFileName);
+
+                Console.WriteLine("PPM generation finished");
+
+                return;
+
+            }
+            else if (args.Length == 9) //Specifying by corners and step size
             {
 
                 mode = ParseMode(args[0]);
@@ -200,6 +228,11 @@ namespace MandelbrotSet
                 case "distributed_client":
                 case "dc":
                     return Mode.Distributed_Server;
+
+                case "ppm":
+                case "generate-ppm":
+                case "genppm":
+                    return Mode.Generate_PPM;
 
                 default:
                     throw new ArgumentException("Invalid input format");

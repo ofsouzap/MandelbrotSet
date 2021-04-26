@@ -6,9 +6,6 @@ from PIL import ImageTk, Image;
 from os import system as call;
 from os.path import isfile;
 
-import imagegeneration;
-import loaddata;
-
 IMAGE_SIZE = (512,512);
 
 DEFAULT_RECENT_SETTINGS = ("0", "0", "1", "128", "128", "max");
@@ -84,8 +81,7 @@ def recalculate_mb(center,range,definition,maxRecursionDepth,buffer_size):
 
 def generate_new_ppm():
 
-    data = loaddata.load_data_file(DATA_FILENAME);
-    imagegeneration.write_ppm(data, IMAGE_FILENAME);
+    call(f"{GENERATION_PROGRAM_PATH} genppm {DATA_FILENAME} {IMAGE_FILENAME}");
 
 def get_mb_image(try_use_current = False):
 
