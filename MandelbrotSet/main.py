@@ -8,6 +8,8 @@ from os.path import isfile;
 import imagegeneration;
 import loaddata;
 
+IMAGE_SIZE = (512,512);
+
 DEFAULT_RECENT_SETTINGS = ("0", "0", "1", "128", "128", "max");
 RECENT_SETTINGS_FILENAME = "_recent_settings.dat";
 GENERATION_PROGRAM_PATH = "MandelbrotSet.exe";
@@ -16,7 +18,6 @@ DATA_FILENAME = "tmp_data.dat";
 
 centerr_entry = centeri_entry = range_entry = definition_entry = maxRD_entry = buffer_size_entry = None;
 mb_image_label = None;
-status_label = None;
 
 def set_recent_settings(settings):
 
@@ -56,19 +57,22 @@ def recalculate_mb(center,range,definition,maxRecursionDepth,buffer_size):
 
 def get_mb_image():
 
+    global IMAGE_SIZE;
+
     data = loaddata.load_data_file(DATA_FILENAME);
     imagegeneration.write_ppm(data, IMAGE_FILENAME);
 
     image = Image.open(IMAGE_FILENAME);
+    image = image.resize(IMAGE_SIZE);
 
     photoImage = ImageTk.PhotoImage(image);
     return photoImage;
 
 def on_recalculate_press():
 
+    global IMAGE_SIZE;
     global centerr_entry, centeri_entry, range_entry, definition_entry, maxRD_entry, buffer_size_entry;
     global mb_image_label;
-    global status_label;
 
     centerr = centerr_entry.get();
     centeri = centeri_entry.get();
@@ -95,57 +99,65 @@ def open_interface():
     global IMAGE_FILENAME, DATA_FILENAME;
     global centerr_entry, centeri_entry, range_entry, definition_entry, maxRD_entry, buffer_size_entry;
     global mb_image_label;
-    global status_label;
 
     recent_settings = get_recent_settings();
 
     window = tk.Tk();
+
+    #Image
+
+    image_frame = tk.Frame(window);
     
     mb_image = get_mb_image();
 
-    mb_image_label = tk.Label(window,
+    mb_image_label = tk.Label(image_frame,
                               image=mb_image,
-                              width=256,
-                              height=256);
+                              width=IMAGE_SIZE[0],
+                              height=IMAGE_SIZE[1]);
 
     mb_image_label.pack();
 
-    tk.Label(window, text="Center (r)").pack();
-    centerr_entry = tk.Entry(window);
+    image_frame.pack();
+
+    #Settings
+
+    settings_frame = tk.Frame(window);
+
+    tk.Label(settings_frame, text="Center (r)").grid(row=0,column=0);
+    centerr_entry = tk.Entry(settings_frame);
     centerr_entry.insert(0, recent_settings[0]);
-    centerr_entry.pack();
+    centerr_entry.grid(row=0,column=1);
 
-    tk.Label(window, text="Center (i)").pack();
-    centeri_entry = tk.Entry(window);
+    tk.Label(settings_frame, text="Center (i)").grid(row=1,column=0);
+    centeri_entry = tk.Entry(settings_frame);
     centeri_entry.insert(0, recent_settings[1]);
-    centeri_entry.pack();
+    centeri_entry.grid(row=1,column=1);
 
-    tk.Label(window, text="Range").pack();
-    range_entry = tk.Entry(window);
+    tk.Label(settings_frame, text="Range").grid(row=2,column=0);
+    range_entry = tk.Entry(settings_frame);
     range_entry.insert(0, recent_settings[2]);
-    range_entry.pack();
+    range_entry.grid(row=2,column=1);
 
-    tk.Label(window, text="Definition").pack();
-    definition_entry = tk.Entry(window);
+    tk.Label(settings_frame, text="Definition").grid(row=3,column=0);
+    definition_entry = tk.Entry(settings_frame);
     definition_entry.insert(0, recent_settings[3]);
-    definition_entry.pack();
+    definition_entry.grid(row=3,column=1);
 
-    tk.Label(window, text="Max Recursion Depth").pack();
-    maxRD_entry = tk.Entry(window);
+    tk.Label(settings_frame, text="Max Recursion Depth").grid(row=4,column=0);
+    maxRD_entry = tk.Entry(settings_frame);
     maxRD_entry.insert(0, recent_settings[4]);
-    maxRD_entry.pack();
+    maxRD_entry.grid(row=4,column=1);
 
-    tk.Label(window, text="Buffer Size").pack();
-    buffer_size_entry = tk.Entry(window);
+    tk.Label(settings_frame, text="Buffer Size").grid(row=5,column=0);
+    buffer_size_entry = tk.Entry(settings_frame);
     buffer_size_entry.insert(0, recent_settings[5]);
-    buffer_size_entry.pack();
+    buffer_size_entry.grid(row=5,column=1);
 
-    status_label = tk.Label(window, text="");
-    status_label.pack();
+    tk.Button(settings_frame, text="Reclaculate", command=on_recalculate_press).grid(row=6,column=1);
+
+    settings_frame.pack();
 
     window.bind("<Return>",lambda x: on_recalculate_press());
-
-    tk.Button(window, text="Reclaculate", command=on_recalculate_press).pack();
     
     window.mainloop();
 
