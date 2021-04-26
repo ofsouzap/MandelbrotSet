@@ -62,6 +62,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy ..\..\*.py .</PostBuildEvent>
+    <PostBuildEvent>copy ..\..\*.py .
+copy ..\..\icon.png .</PostBuildEvent>
   </PropertyGroup>
 </Project>

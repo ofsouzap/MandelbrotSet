@@ -15,6 +15,7 @@ RECENT_SETTINGS_FILENAME = "_recent_settings.dat";
 GENERATION_PROGRAM_PATH = "MandelbrotSet.exe";
 IMAGE_FILENAME = "mandelbrot_image.ppm";
 DATA_FILENAME = "tmp_data.dat";
+ICON_IMAGE_FILENAME = "icon.png";
 
 centerr_entry = centeri_entry = range_entry = definition_entry = maxRD_entry = buffer_size_entry = None;
 mb_image_label = None;
@@ -45,6 +46,12 @@ def is_number(string):
 
 def check_arguments_validity(centerr,centeri,range,definition,maxRecursionDepth,buffer_size):
     return is_number(centerr) and is_number(centeri) and is_number(range) and definition.isdigit() and maxRecursionDepth.isdigit() and (buffer_size.isdigit() or buffer_size == "max");
+
+def load_icon_image():
+
+    global ICON_IMAGE_FILENAME;
+
+    return ImageTk.PhotoImage(Image.open(ICON_IMAGE_FILENAME));
 
 def recalculate_mb(center,range,definition,maxRecursionDepth,buffer_size):
 
@@ -103,6 +110,8 @@ def open_interface():
     recent_settings = get_recent_settings();
 
     window = tk.Tk();
+    window.title("Mandelbrot Set");
+    window.iconphoto(False, load_icon_image());
 
     #Image
 
