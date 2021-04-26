@@ -1,29 +1,43 @@
 from math import floor;
+from matplotlib import cm;
+
+colormap = cm.get_cmap("jet");
 
 def normalised_value_to_byte(value):
     return floor(value * 255);
 
+def get_value(self, point):
+
+    if type(point) != float:
+        raise Exception("point must be float");
+
+    if (point < 0) or (point > 1):
+        raise Exception("point must be in range [0,1]");
+
 #Converts a normalised value into a 3-value bytearray signifying a red, green and blue value respectively
 def normalised_to_color(value):
 
-    #TODO - replace with something better
+    global colormap;
+
+    if value == 0:
+        return bytearray([0,0,0]);
+
+    rgba = colormap(1-value);
 
     return bytearray([
-        normalised_value_to_byte(value),
-        normalised_value_to_byte(value),
-        normalised_value_to_byte(value)
+        normalised_value_to_byte(rgba[0]),
+        normalised_value_to_byte(rgba[1]),
+        normalised_value_to_byte(rgba[2])
         ]);
 
 #Generates a ppm image from a 2-dimensional iterable with numerical values and saves it as the specified filename
 def write_ppm(raw_values, filename):
 
-    NEWLINE = ord("\n");
-
-    rows = len(raw_values[0]);
-    columns = len(raw_values);
+    columns = len(raw_values[0]);
+    rows = len(raw_values);
     
     for column in raw_values:
-        if (len(column)) != rows:
+        if (len(column)) != columns:
             raise Exception("raw_values has inconsistent row count");
 
     maximum_value = 0;
@@ -43,6 +57,10 @@ def write_ppm(raw_values, filename):
 
             for value in column:
 
-                normalised_value = value / maximum_value;
+                if maximum_value != 0:
+                    normalised_value = value / maximum_value;
+                else:
+                    normalised_value = 0 if value == 0 else 1;
+
                 color = normalised_to_color(normalised_value);
                 file.write(color);
