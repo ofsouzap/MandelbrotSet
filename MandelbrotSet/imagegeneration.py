@@ -33,6 +33,8 @@ def normalised_to_color(value):
 #Generates a ppm image from a 2-dimensional iterable with numerical values and saves it as the specified filename
 def write_ppm(raw_values, filename):
 
+    print("Starting PPM generation...");
+
     columns = len(raw_values[0]);
     rows = len(raw_values);
     
@@ -64,3 +66,5 @@ def write_ppm(raw_values, filename):
 
                 color = normalised_to_color(normalised_value);
                 file.write(color);
+
+    print("PPM generation complete");

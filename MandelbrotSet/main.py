@@ -1,5 +1,6 @@
 import tkinter as tk;
 from tkinter import messagebox;
+from tkinter import filedialog;
 import re;
 from PIL import ImageTk, Image;
 from os import system as call;
@@ -53,6 +54,25 @@ def load_icon_image():
 
     return ImageTk.PhotoImage(Image.open(ICON_IMAGE_FILENAME));
 
+#Image
+
+SAVE_AS_FILE_TYPES = (
+    ("PNG","*.png"),
+    ("PPM","*.ppm"),
+    ("JPEG","*.jpeg")
+);
+
+def on_save_image_button_press():
+
+    global SAVE_AS_FILE_TYPES;
+
+    filename = filedialog.asksaveasfilename(filetype = SAVE_AS_FILE_TYPES, defaultextension=SAVE_AS_FILE_TYPES);
+
+    open_image().save(filename);
+
+def open_image():
+    return Image.open(IMAGE_FILENAME);
+
 def recalculate_mb(center,range,definition,maxRecursionDepth,buffer_size):
 
     global GENERATION_PROGRAM_PATH;
@@ -62,15 +82,33 @@ def recalculate_mb(center,range,definition,maxRecursionDepth,buffer_size):
 
     call(f"{GENERATION_PROGRAM_PATH} dv {center[0]} {center[1]} {range} {definition} {maxRecursionDepth} {buffer_size}");
 
-def get_mb_image():
-
-    global IMAGE_SIZE;
+def generate_new_ppm():
 
     data = loaddata.load_data_file(DATA_FILENAME);
     imagegeneration.write_ppm(data, IMAGE_FILENAME);
 
-    image = Image.open(IMAGE_FILENAME);
-    image = image.resize(IMAGE_SIZE);
+def get_mb_image(try_use_current = False):
+
+    global IMAGE_SIZE;
+
+    if not try_use_current:
+
+        generate_new_ppm();
+        image = open_image();
+        image = image.resize(IMAGE_SIZE);
+
+    else:
+
+        try:
+
+            image = open_image();
+            image = image.resize(IMAGE_SIZE);
+
+        except OSError:
+
+            generate_new_ppm();
+            image = open_image();
+            image = image.resize(IMAGE_SIZE);
 
     photoImage = ImageTk.PhotoImage(image);
     return photoImage;
@@ -94,12 +132,14 @@ def on_recalculate_press():
 
         recalculate_mb((centerr,str(-float(centeri))),range,definition,maxRD,buffer_size);
 
-        new_img = get_mb_image();
+        new_img = get_mb_image(try_use_current = False);
         mb_image_label.config(image=new_img);
         mb_image_label.image = new_img;
 
     else:
         messagebox.showwarning("Invalid", "One or more arguments are invalid");
+
+#Main
 
 def open_interface():
 
@@ -116,8 +156,12 @@ def open_interface():
     #Image
 
     image_frame = tk.Frame(window);
+
+    tk.Button(image_frame,
+              text = "Save Image As",
+              command = on_save_image_button_press).pack();
     
-    mb_image = get_mb_image();
+    mb_image = get_mb_image(try_use_current = True);
 
     mb_image_label = tk.Label(image_frame,
                               image=mb_image,
