@@ -87,7 +87,7 @@ def get_mb_image(try_use_current = False):
 
     global IMAGE_SIZE;
 
-    if not try_use_current:
+    if (not try_use_current) or (not isfile(IMAGE_FILENAME)):
 
         generate_new_ppm();
         image = open_image();
