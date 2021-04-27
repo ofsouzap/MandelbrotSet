@@ -25,14 +25,14 @@ namespace MandelbrotSet
             ushort maximumRecursionDepth;
             ulong bufferSize;
 
-            if (args.Length == 3)
+            if (args.Length == 4)
             {
 
                 mode = ParseMode(args[0]);
 
                 if (mode != Mode.Generate_PPM)
                 {
-                    Console.WriteLine("Only use 3 arguments when trying to generate PPM");
+                    Console.WriteLine("Only use 4 arguments when trying to generate PPM");
                     return;
                 }
 
@@ -45,10 +45,11 @@ namespace MandelbrotSet
                 }
 
                 string outputFileName = args[2];
+                string colorGradientName = args[3];
 
                 Console.WriteLine("Starting PPM generation");
 
-                GeneratePPM.Generate(dataFileName, outputFileName);
+                GeneratePPM.Generate(dataFileName, outputFileName, colorGradientName);
 
                 Console.WriteLine("PPM generation finished");
 

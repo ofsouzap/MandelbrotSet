@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace MandelbrotSet
 {
@@ -11,7 +11,8 @@ namespace MandelbrotSet
         public const string colormapScriptName = "colormap.py";
 
         public static void Generate(string dataFileName,
-            string outputFileName)
+            string outputFileName,
+            string colorGradientName)
         {
 
             if (!File.Exists(dataFileName))
@@ -48,7 +49,7 @@ namespace MandelbrotSet
                             ? value / maxValue
                             : value == 0 ? 0 : 1;
 
-                        Color valueColor = NormalisedValueToColor(normalisedValue);
+                        Color valueColor = NormalisedValueToColor(normalisedValue, colorGradientName);
                         byte[] colorBytes = valueColor.Bytes;
 
                         stream.Write(colorBytes, 0, colorBytes.Length);
@@ -232,9 +233,17 @@ namespace MandelbrotSet
 
         }
 
+        private static readonly Dictionary<string, Func<double, Color>> colorGradientFunctions = new Dictionary<string, Func<double, Color>>()
+        {
+            { "rgb", x => RGBGradient(x) },
+            { "greyscale", x => GreyscaleGradient(x) },
+            { "jet", x => ColorGradient.jet.GetColor(x) },
+            { "jet-inverse", x => ColorGradient.jet.GetColor( 1 - x ) }
+        };
+
         #endregion
 
-        private static Color NormalisedValueToColor(double value)
+        private static Color NormalisedValueToColor(double value, string colorGradientName)
         {
 
             if (value < 0 || value > 1)
@@ -244,9 +253,7 @@ namespace MandelbrotSet
                 return Color.Black;
             else
             {
-                //return RGBGradient(value);
-                //return GreyscaleGradient(value);
-                return ColorGradient.jet.GetColor(1-value);
+                return colorGradientFunctions[colorGradientName](value);
             }
 
         }

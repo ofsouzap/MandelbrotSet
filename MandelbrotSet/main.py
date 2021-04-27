@@ -8,14 +8,22 @@ from os.path import isfile;
 
 IMAGE_SIZE = (512,512);
 
-DEFAULT_RECENT_SETTINGS = ("0", "0", "1", "128", "128", "max");
+DEFAULT_RECENT_SETTINGS = ("0", "0", "1", "128", "128", "max", "jet-inverse");
 RECENT_SETTINGS_FILENAME = "_recent_settings.dat";
 GENERATION_PROGRAM_PATH = "MandelbrotSet.exe";
 IMAGE_FILENAME = "mandelbrot_image.ppm";
 DATA_FILENAME = "tmp_data.dat";
 ICON_IMAGE_FILENAME = "icon.png";
 
+COLOR_GRADIENT_OPTIONS = (
+    "jet-inverse",
+    "jet",
+    "rgb",
+    "greyscale"
+);
+
 centerr_entry = centeri_entry = range_entry = definition_entry = maxRD_entry = buffer_size_entry = None;
+color_gradient_option_menu = color_gradient_variable = None;
 mb_image_label = None;
 
 def set_recent_settings(settings):
@@ -33,7 +41,11 @@ def get_recent_settings():
         with open(RECENT_SETTINGS_FILENAME, "r") as file:
             contents = file.read();
 
-        return tuple(contents.split(","));
+        settings = tuple(contents.split(","));
+        if len(settings) == DEFAULT_RECENT_SETTINGS:
+            return settings;
+        else:
+            return DEFAULT_RECENT_SETTINGS;
 
     else:
 
@@ -79,17 +91,17 @@ def recalculate_mb(center,range,definition,maxRecursionDepth,buffer_size):
 
     call(f"{GENERATION_PROGRAM_PATH} dv {center[0]} {center[1]} {range} {definition} {maxRecursionDepth} {buffer_size}");
 
-def generate_new_ppm():
+def generate_new_ppm(color_gradient_name):
 
-    call(f"{GENERATION_PROGRAM_PATH} genppm {DATA_FILENAME} {IMAGE_FILENAME}");
+    call(f"{GENERATION_PROGRAM_PATH} genppm {DATA_FILENAME} {IMAGE_FILENAME} {color_gradient_name}");
 
-def get_mb_image(try_use_current = False):
+def get_mb_image(color_gradient_name, try_use_current = False):
 
     global IMAGE_SIZE;
 
     if (not try_use_current) or (not isfile(IMAGE_FILENAME)):
 
-        generate_new_ppm();
+        generate_new_ppm(color_gradient_name);
         image = open_image();
         image = image.resize(IMAGE_SIZE);
 
@@ -102,7 +114,7 @@ def get_mb_image(try_use_current = False):
 
         except OSError:
 
-            generate_new_ppm();
+            generate_new_ppm(color_gradient_name);
             image = open_image();
             image = image.resize(IMAGE_SIZE);
 
@@ -113,6 +125,7 @@ def on_recalculate_press():
 
     global IMAGE_SIZE;
     global centerr_entry, centeri_entry, range_entry, definition_entry, maxRD_entry, buffer_size_entry;
+    global color_gradient_variable;
     global mb_image_label;
 
     centerr = centerr_entry.get();
@@ -128,7 +141,7 @@ def on_recalculate_press():
 
         recalculate_mb((centerr,str(-float(centeri))),range,definition,maxRD,buffer_size);
 
-        new_img = get_mb_image(try_use_current = False);
+        new_img = get_mb_image(color_gradient_variable.get(), try_use_current = False);
         mb_image_label.config(image=new_img);
         mb_image_label.image = new_img;
 
@@ -141,6 +154,7 @@ def open_interface():
 
     global IMAGE_FILENAME, DATA_FILENAME;
     global centerr_entry, centeri_entry, range_entry, definition_entry, maxRD_entry, buffer_size_entry;
+    global color_gradient_option_menu, color_gradient_variable;
     global mb_image_label;
 
     recent_settings = get_recent_settings();
@@ -148,6 +162,9 @@ def open_interface():
     window = tk.Tk();
     window.title("Mandelbrot Set");
     window.iconphoto(False, load_icon_image());
+
+    color_gradient_variable = tk.StringVar(window);
+    color_gradient_variable.set(recent_settings[6]);
 
     #Image
 
@@ -157,7 +174,7 @@ def open_interface():
               text = "Save Image As",
               command = on_save_image_button_press).pack();
     
-    mb_image = get_mb_image(try_use_current = True);
+    mb_image = get_mb_image(color_gradient_variable, try_use_current = True);
 
     mb_image_label = tk.Label(image_frame,
                               image=mb_image,
@@ -166,45 +183,49 @@ def open_interface():
 
     mb_image_label.pack();
 
-    image_frame.pack();
+    image_frame.grid(row=0, column=0, padx=20, pady=20);
 
     #Settings
 
     settings_frame = tk.Frame(window);
 
-    tk.Label(settings_frame, text="Center (r)").grid(row=0,column=0);
+    tk.Label(settings_frame, text="Color Scheme").grid(row=0, column=0);
+    color_gradient_option_menu = tk.OptionMenu(settings_frame, color_gradient_variable, *COLOR_GRADIENT_OPTIONS);
+    color_gradient_option_menu.grid(row=0, column=1);
+
+    tk.Label(settings_frame, text="Center (r)").grid(row=1,column=0);
     centerr_entry = tk.Entry(settings_frame);
     centerr_entry.insert(0, recent_settings[0]);
-    centerr_entry.grid(row=0,column=1);
+    centerr_entry.grid(row=1,column=1);
 
-    tk.Label(settings_frame, text="Center (i)").grid(row=1,column=0);
+    tk.Label(settings_frame, text="Center (i)").grid(row=2,column=0);
     centeri_entry = tk.Entry(settings_frame);
     centeri_entry.insert(0, recent_settings[1]);
-    centeri_entry.grid(row=1,column=1);
+    centeri_entry.grid(row=2,column=1);
 
-    tk.Label(settings_frame, text="Range").grid(row=2,column=0);
+    tk.Label(settings_frame, text="Range").grid(row=3,column=0);
     range_entry = tk.Entry(settings_frame);
     range_entry.insert(0, recent_settings[2]);
-    range_entry.grid(row=2,column=1);
+    range_entry.grid(row=3,column=1);
 
-    tk.Label(settings_frame, text="Definition").grid(row=3,column=0);
+    tk.Label(settings_frame, text="Definition").grid(row=4,column=0);
     definition_entry = tk.Entry(settings_frame);
     definition_entry.insert(0, recent_settings[3]);
-    definition_entry.grid(row=3,column=1);
+    definition_entry.grid(row=4,column=1);
 
-    tk.Label(settings_frame, text="Max Recursion Depth").grid(row=4,column=0);
+    tk.Label(settings_frame, text="Max Recursion Depth").grid(row=5,column=0);
     maxRD_entry = tk.Entry(settings_frame);
     maxRD_entry.insert(0, recent_settings[4]);
-    maxRD_entry.grid(row=4,column=1);
+    maxRD_entry.grid(row=5,column=1);
 
-    tk.Label(settings_frame, text="Buffer Size").grid(row=5,column=0);
+    tk.Label(settings_frame, text="Buffer Size").grid(row=6,column=0);
     buffer_size_entry = tk.Entry(settings_frame);
     buffer_size_entry.insert(0, recent_settings[5]);
-    buffer_size_entry.grid(row=5,column=1);
+    buffer_size_entry.grid(row=6,column=1);
 
-    tk.Button(settings_frame, text="Reclaculate", command=on_recalculate_press).grid(row=6,column=1);
+    tk.Button(settings_frame, text="Reclaculate", command=on_recalculate_press).grid(row=7,column=1);
 
-    settings_frame.pack();
+    settings_frame.grid(row=0, column=1, padx=20, pady=20);
 
     window.bind("<Return>",lambda x: on_recalculate_press());
     
