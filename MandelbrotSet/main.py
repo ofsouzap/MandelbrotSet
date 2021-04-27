@@ -42,13 +42,14 @@ def get_recent_settings():
             contents = file.read();
 
         settings = tuple(contents.split(","));
-        if len(settings) == DEFAULT_RECENT_SETTINGS:
+        if len(settings) == len(DEFAULT_RECENT_SETTINGS):
             return settings;
         else:
+            print(settings);
             return DEFAULT_RECENT_SETTINGS;
 
     else:
-
+        
         return DEFAULT_RECENT_SETTINGS;
 
 def is_number(string):
@@ -137,7 +138,7 @@ def on_recalculate_press():
 
     if check_arguments_validity(centerr,centeri,range,definition,maxRD,buffer_size):
 
-        set_recent_settings((centerr,centeri,range,definition,maxRD,buffer_size));
+        set_recent_settings((centerr,centeri,range,definition,maxRD,buffer_size,color_gradient_variable.get()));
 
         recalculate_mb((centerr,str(-float(centeri))),range,definition,maxRD,buffer_size);
 
@@ -158,7 +159,7 @@ def open_interface():
     global mb_image_label;
 
     recent_settings = get_recent_settings();
-
+    
     window = tk.Tk();
     window.title("Mandelbrot Set");
     window.iconphoto(False, load_icon_image());
