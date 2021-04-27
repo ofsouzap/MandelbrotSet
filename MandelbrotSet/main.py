@@ -122,6 +122,14 @@ def get_mb_image(color_gradient_name, try_use_current = False):
     photoImage = ImageTk.PhotoImage(image);
     return photoImage;
 
+def refresh_image():
+
+    global color_gradient_variable;
+
+    new_img = get_mb_image(color_gradient_variable.get(), try_use_current = False);
+    mb_image_label.config(image=new_img);
+    mb_image_label.image = new_img;
+
 def on_recalculate_press():
 
     global IMAGE_SIZE;
@@ -142,9 +150,7 @@ def on_recalculate_press():
 
         recalculate_mb((centerr,str(-float(centeri))),range,definition,maxRD,buffer_size);
 
-        new_img = get_mb_image(color_gradient_variable.get(), try_use_current = False);
-        mb_image_label.config(image=new_img);
-        mb_image_label.image = new_img;
+        refresh_image();
 
     else:
         messagebox.showwarning("Invalid", "One or more arguments are invalid");
@@ -194,37 +200,39 @@ def open_interface():
     color_gradient_option_menu = tk.OptionMenu(settings_frame, color_gradient_variable, *COLOR_GRADIENT_OPTIONS);
     color_gradient_option_menu.grid(row=0, column=1);
 
-    tk.Label(settings_frame, text="Center (r)").grid(row=1,column=0);
+    tk.Button(settings_frame, text="Recalculate only Image", command=refresh_image).grid(row=1,column=1);
+
+    tk.Label(settings_frame, text="Center (r)").grid(row=2,column=0);
     centerr_entry = tk.Entry(settings_frame);
     centerr_entry.insert(0, recent_settings[0]);
-    centerr_entry.grid(row=1,column=1);
+    centerr_entry.grid(row=2,column=1);
 
-    tk.Label(settings_frame, text="Center (i)").grid(row=2,column=0);
+    tk.Label(settings_frame, text="Center (i)").grid(row=3,column=0);
     centeri_entry = tk.Entry(settings_frame);
     centeri_entry.insert(0, recent_settings[1]);
-    centeri_entry.grid(row=2,column=1);
+    centeri_entry.grid(row=3,column=1);
 
-    tk.Label(settings_frame, text="Range").grid(row=3,column=0);
+    tk.Label(settings_frame, text="Range").grid(row=4,column=0);
     range_entry = tk.Entry(settings_frame);
     range_entry.insert(0, recent_settings[2]);
-    range_entry.grid(row=3,column=1);
+    range_entry.grid(row=4,column=1);
 
-    tk.Label(settings_frame, text="Definition").grid(row=4,column=0);
+    tk.Label(settings_frame, text="Definition").grid(row=5,column=0);
     definition_entry = tk.Entry(settings_frame);
     definition_entry.insert(0, recent_settings[3]);
-    definition_entry.grid(row=4,column=1);
+    definition_entry.grid(row=5,column=1);
 
-    tk.Label(settings_frame, text="Max Recursion Depth").grid(row=5,column=0);
+    tk.Label(settings_frame, text="Max Recursion Depth").grid(row=6,column=0);
     maxRD_entry = tk.Entry(settings_frame);
     maxRD_entry.insert(0, recent_settings[4]);
-    maxRD_entry.grid(row=5,column=1);
+    maxRD_entry.grid(row=6,column=1);
 
-    tk.Label(settings_frame, text="Buffer Size").grid(row=6,column=0);
+    tk.Label(settings_frame, text="Buffer Size").grid(row=7,column=0);
     buffer_size_entry = tk.Entry(settings_frame);
     buffer_size_entry.insert(0, recent_settings[5]);
-    buffer_size_entry.grid(row=6,column=1);
+    buffer_size_entry.grid(row=7,column=1);
 
-    tk.Button(settings_frame, text="Reclaculate", command=on_recalculate_press).grid(row=7,column=1);
+    tk.Button(settings_frame, text="Reclaculate", command=on_recalculate_press).grid(row=8,column=1);
 
     settings_frame.grid(row=0, column=1, padx=20, pady=20);
 
