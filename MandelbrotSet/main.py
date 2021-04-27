@@ -74,9 +74,16 @@ SAVE_AS_FILE_TYPES = (
 
 def on_save_image_button_press():
 
+    global centerr_entry, centeri_entry, range_entry;
     global SAVE_AS_FILE_TYPES;
 
-    filename = filedialog.asksaveasfilename(filetype = SAVE_AS_FILE_TYPES, defaultextension=SAVE_AS_FILE_TYPES);
+    centerr = centerr_entry.get();
+    centeri = centeri_entry.get();
+    range = range_entry.get();
+
+    filename = filedialog.asksaveasfilename(filetype = SAVE_AS_FILE_TYPES,
+                                            defaultextension=SAVE_AS_FILE_TYPES,
+                                            initialfile = f"{centerr},{centeri} range {range}");
 
     open_image().save(filename);
 
