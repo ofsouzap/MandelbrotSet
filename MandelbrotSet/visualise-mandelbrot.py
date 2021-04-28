@@ -1,6 +1,5 @@
 from sys import argv;
 import matplotlib.pyplot as plt;
-from csv import reader as csv_reader;
 
 import loaddata;
 
