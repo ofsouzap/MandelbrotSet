@@ -105,29 +105,38 @@ def generate_new_ppm(color_gradient_name):
 
 def get_mb_image(color_gradient_name, try_use_current = False):
 
-    global IMAGE_SIZE;
+    global IMAGE_SIZE,DATA_FILENAME;
 
-    if (not try_use_current) or (not isfile(IMAGE_FILENAME)):
+    if not isfile(DATA_FILENAME):
 
-        generate_new_ppm(color_gradient_name);
-        image = open_image();
-        image = image.resize(IMAGE_SIZE);
+        return tk.PhotoImage();
 
     else:
 
-        try:
-
-            image = open_image();
-            image = image.resize(IMAGE_SIZE);
-
-        except OSError:
+        if (not try_use_current) or (not isfile(IMAGE_FILENAME)):
 
             generate_new_ppm(color_gradient_name);
             image = open_image();
             image = image.resize(IMAGE_SIZE);
 
-    photoImage = ImageTk.PhotoImage(image);
-    return photoImage;
+        else:
+
+            try:
+
+                if not isfile(IMAGE_FILENAME):
+                    raise OSError("Image file doesn't exist"); #This is to forcefully run the "except OSError" code
+
+                image = open_image();
+                image = image.resize(IMAGE_SIZE);
+
+            except OSError:
+
+                generate_new_ppm(color_gradient_name);
+                image = open_image();
+                image = image.resize(IMAGE_SIZE);
+
+        photoImage = ImageTk.PhotoImage(image);
+        return photoImage;
 
 def refresh_image():
 
