@@ -28,7 +28,8 @@ namespace MandelbrotSet
                 while (stream.BaseStream.Position != stream.BaseStream.Length)
                 {
 
-                    float value = stream.ReadSingle();
+                    ushort fileValue = stream.ReadUInt16();
+                    float value = (float)fileValue / ushort.MaxValue;
 
                     currentRow.Add(value);
 

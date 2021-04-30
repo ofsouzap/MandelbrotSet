@@ -10,7 +10,7 @@ namespace MandelbrotSet
 
         /* Data file format:
          * First 8 bytes - number of rows in file
-         * Afterwards, file is many 4-byte floating-point values to represent the data.
+         * Afterwards, file is many 2-byte uint16 to represent the data.
          */
 
         public const string visualisationProgramFileName = "visualise-mandelbrot.py";
@@ -36,7 +36,12 @@ namespace MandelbrotSet
                 foreach (float value in data)
                 {
 
-                    byte[] valueBytes = BitConverter.GetBytes(value);
+                    if (value < 0 || value > 1)
+                        throw new ArgumentException("Provided data contains value outside range [0,1]");
+
+                    ushort valueToWrite = (ushort)Math.Floor(ushort.MaxValue * value);
+
+                    byte[] valueBytes = BitConverter.GetBytes(valueToWrite);
                     file.Write(valueBytes, 0, valueBytes.Length);
 
                 }
