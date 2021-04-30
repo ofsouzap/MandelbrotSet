@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,17 +13,17 @@ namespace MandelbrotSet
         /// </summary>
         public const ushort giveUpOriginRadius = 2;
 
-        public static ushort GenerateValue(ComplexNumber C,
+        public static ulong GenerateValue(ComplexNumber C,
             ulong maximumRecursionDepth)
         {
             
             //Start at C instead of 0 since second value of Z is always C
             ComplexNumber Z = new ComplexNumber(C.r, C.i);
 
-            ushort steps = 0;
+            ulong steps = 0;
             bool completed = false;
 
-            for (ushort iteration = 0; iteration < maximumRecursionDepth; iteration++)
+            for (ulong iteration = 0; iteration < maximumRecursionDepth; iteration++)
             {
 
                 steps++;
@@ -36,7 +37,7 @@ namespace MandelbrotSet
 
             }
 
-            return completed ? steps : (ushort)0;
+            return completed ? steps : (ulong)0;
 
         }
 
@@ -48,7 +49,7 @@ namespace MandelbrotSet
             double minI,
             double maxI,
             double stepI,
-            ushort maximumRecursionDepth,
+            ulong maximumRecursionDepth,
             string outputFileName,
             ulong bufferSize = ulong.MaxValue)
         {
@@ -62,7 +63,7 @@ namespace MandelbrotSet
             for (double i = minI; i <= maxI; i += stepI)
             {
 
-                List<ushort> current = new List<ushort>();
+                List<ulong> current = new List<ulong>();
 
                 for (double r = minR; r <= maxR; r += stepR)
                 {
@@ -74,7 +75,7 @@ namespace MandelbrotSet
 
                     if ((ulong)current.Count >= bufferSize)
                     {
-                        SaveValuesToFile(current.ToArray(), outputFileName);
+                        SaveValuesToFile(current.Select(x => (float)x / maximumRecursionDepth).ToArray(), outputFileName);
                         current.Clear();
                     }
 
@@ -82,7 +83,7 @@ namespace MandelbrotSet
 
                 if (current.Count > 0)
                 {
-                    SaveValuesToFile(current.ToArray(), outputFileName);
+                    SaveValuesToFile(current.Select(x => (float)x / maximumRecursionDepth).ToArray(), outputFileName);
                     current.Clear();
                 }
 
@@ -90,7 +91,7 @@ namespace MandelbrotSet
 
         }
 
-        private static void SaveValuesToFile(ushort[] values,
+        private static void SaveValuesToFile(float[] values,
             string outputFileName)
         {
             Visualising.WritePartialData(values, outputFileName);

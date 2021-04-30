@@ -22,7 +22,7 @@ namespace MandelbrotSet
 
             Mode mode;
             double minR, maxR, stepR, minI, maxI, stepI;
-            ushort maximumRecursionDepth;
+            ulong maximumRecursionDepth;
             ulong bufferSize;
 
             if (args.Length == 4)
@@ -66,7 +66,7 @@ namespace MandelbrotSet
                 minI = double.Parse(args[4]);
                 maxI = double.Parse(args[5]);
                 stepI = double.Parse(args[6]);
-                maximumRecursionDepth = ushort.Parse(args[7]);
+                maximumRecursionDepth = ulong.Parse(args[7]);
                 bufferSize = GetBufferSizeFromInput(args[8]);
 
             }
@@ -96,7 +96,7 @@ namespace MandelbrotSet
                     out stepI
                     );
 
-                maximumRecursionDepth = ushort.Parse(args[5]);
+                maximumRecursionDepth = ulong.Parse(args[5]);
                 bufferSize = GetBufferSizeFromInput(args[6]);
 
             }
@@ -125,7 +125,7 @@ namespace MandelbrotSet
                 stepI = double.Parse(Console.ReadLine());
 
                 Console.Write("Maximum Recursion Depth> ");
-                maximumRecursionDepth = ushort.Parse(Console.ReadLine());
+                maximumRecursionDepth = ulong.Parse(Console.ReadLine());
 
                 Console.Write("Buffer Size (Generic size = 65535)> ");
                 string bufferSizeInput = Console.ReadLine();
@@ -272,7 +272,7 @@ namespace MandelbrotSet
             double minI,
             double maxI,
             double stepI,
-            ushort maximumRecursionDepth,
+            ulong maximumRecursionDepth,
             ulong bufferSize,
             bool visualise)
         {

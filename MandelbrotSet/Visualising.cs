@@ -10,7 +10,7 @@ namespace MandelbrotSet
 
         /* Data file format:
          * First 8 bytes - number of rows in file
-         * Afterwards, file is many 4-byte values to represent the data.
+         * Afterwards, file is many 4-byte floating-point values to represent the data.
          */
 
         public const string visualisationProgramFileName = "visualise-mandelbrot.py";
@@ -27,17 +27,17 @@ namespace MandelbrotSet
         }
 
         // Data must all be for a single row
-        public static void WritePartialData(ushort[] data, string outputFileName)
+        public static void WritePartialData(float[] data, string outputFileName)
         {
 
             using (FileStream file = File.Open(outputFileName, FileMode.Append))
             {
 
-                foreach (ushort value in data)
+                foreach (float value in data)
                 {
 
                     byte[] valueBytes = BitConverter.GetBytes(value);
-                    file.Write(valueBytes, 0, 2);
+                    file.Write(valueBytes, 0, valueBytes.Length);
 
                 }
 

@@ -8,8 +8,6 @@ namespace MandelbrotSet
     public static class GeneratePPM
     {
 
-        public const string colormapScriptName = "colormap.py";
-
         public static void Generate(string dataFileName,
             string outputFileName,
             string colorGradientName)
@@ -18,21 +16,14 @@ namespace MandelbrotSet
             if (!File.Exists(dataFileName))
                 throw new ArgumentException("Provided data file name doesn't exist");
 
-            double[][] data = LoadData.Load(dataFileName);
+            float[][] data = LoadData.Load(dataFileName);
 
             long rows = data.Length;
             long columns = data[0].Length;
 
-            foreach (double[] column in data)
+            foreach (float[] column in data)
                 if (column.Length != columns)
                     Console.WriteLine("Inconsistent data row count");
-
-            double maxValue = 0;
-
-            foreach (double[] column in data)
-                foreach (double value in column)
-                    if (value > maxValue)
-                        maxValue = value;
 
             using (FileStream stream = File.Open(outputFileName, FileMode.Create))
             {
@@ -41,15 +32,11 @@ namespace MandelbrotSet
 
                 stream.Write(header, 0, header.Length);
 
-                foreach (double[] column in data)
-                    foreach (double value in column)
+                foreach (float[] column in data)
+                    foreach (float value in column)
                     {
 
-                        double normalisedValue = maxValue != 0
-                            ? value / maxValue
-                            : value == 0 ? 0 : 1;
-
-                        Color valueColor = NormalisedValueToColor(normalisedValue, colorGradientName);
+                        Color valueColor = NormalisedValueToColor(value, colorGradientName);
                         byte[] colorBytes = valueColor.Bytes;
 
                         stream.Write(colorBytes, 0, colorBytes.Length);

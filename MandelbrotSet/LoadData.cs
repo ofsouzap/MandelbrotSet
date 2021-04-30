@@ -7,28 +7,28 @@ namespace MandelbrotSet
     public static class LoadData
     {
 
-        public static double[][] Load(string filename)
+        public static float[][] Load(string filename)
         {
 
             if (!File.Exists(filename))
                 throw new ArgumentException("Provided filename doesn't exist");
 
             ulong rowLength;
-            List<double[]> dataList = new List<double[]>();
+            List<float[]> dataList = new List<float[]>();
 
             using (BinaryReader stream = new BinaryReader(File.Open(filename, FileMode.Open)))
             {
 
                 rowLength = stream.ReadUInt64() - 1;
 
-                List<double> currentRow = new List<double>();
+                List<float> currentRow = new List<float>();
 
                 ulong rowIndex = 0;
 
                 while (stream.BaseStream.Position != stream.BaseStream.Length)
                 {
 
-                    ushort value = stream.ReadUInt16();
+                    float value = stream.ReadSingle();
 
                     currentRow.Add(value);
 

@@ -17,7 +17,7 @@ namespace MandelbrotSet
             double minI,
             double maxI,
             double stepI,
-            ushort maximumRecursionDepth,
+            ulong maximumRecursionDepth,
             ulong bufferSize)
         {
             
@@ -31,7 +31,7 @@ namespace MandelbrotSet
             double minI,
             double maxI,
             double stepI,
-            ushort maximumRecursionDepth,
+            ulong maximumRecursionDepth,
             ulong bufferSize)
         {
 
