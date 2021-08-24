@@ -105,7 +105,8 @@ namespace MandelbrotSet
 
         }
 
-        private static void RecordSuitableImage(string dataFileName,
+        private static void RecordSuitableImage(string pythonExecutable,
+            string dataFileName,
             double centerR,
             double centerI,
             double range,
@@ -117,7 +118,7 @@ namespace MandelbrotSet
             //TODO - remove below once done testing
             Console.WriteLine($"Suitable image found: {centerR}+{centerI}i {range} {maximumRecursionDepth}");
             GeneratePPM.Generate(dataFileName, $"tmp_image.ppm", "jet-inverse");
-            Process.Start(@"C:\Python39\python",
+            Process.Start(pythonExecutable,
                 Program.saveImageAsProgramFileName
                 + " tmp_image.ppm "
                 + $"\"found {centerR},{centerI} range {range} mrd {maximumRecursionDepth}.png\"");
@@ -175,7 +176,8 @@ namespace MandelbrotSet
         /// </summary>
         /// <param name="maximumResults">The maximum number of results to return. If non-positive, won't stop</param>
         /// <param name="dataFileName">The name of the file that the data for calculated images is stored in</param>
-        public static void SearchForImages(int seed,
+        public static void SearchForImages(string pythonExecutable,
+            int seed,
             int maximumResults,
             string dataFileName,
             double randomCenterMaxRange = 0,
@@ -215,7 +217,7 @@ namespace MandelbrotSet
                 if (CheckImageSuitability(dataFileName))
                 {
 
-                    RecordSuitableImage(dataFileName, centerR, centerI, range, maximumRecursionDepth);
+                    RecordSuitableImage(pythonExecutable, dataFileName, centerR, centerI, range, maximumRecursionDepth);
                     resultsFound++;
 
                     if (maximumResults > 0 && resultsFound >= maximumResults)

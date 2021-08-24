@@ -48,19 +48,19 @@ namespace MandelbrotSet
                     Console.WriteLine("Invalid maximum results passed");
                 }
 
-                ImageSearching.SearchForImages(seed, maximumResults, dataFileName);
+                ImageSearching.SearchForImages(@"C:\Python39\python", seed, maximumResults, dataFileName);
 
                 return;
 
             }
-            else if (args.Length == 5) //Image searching with more parameters
+            else if (args.Length == 6) //Image searching with more parameters
             {
 
                 mode = ParseMode(args[0]);
 
                 if (mode != Mode.ImageSearching)
                 {
-                    Console.WriteLine("Only use 5 arguments when trying to use image searching");
+                    Console.WriteLine("Only use 6 arguments when trying to use image searching");
                     return;
                 }
 
@@ -84,7 +84,9 @@ namespace MandelbrotSet
                     Console.WriteLine("Invalid maximum range passed");
                 }
 
-                ImageSearching.SearchForImages(seed, maximumResults, dataFileName, maxCenterRange, maxRange);
+                string pythonExecutable = args[5];
+
+                ImageSearching.SearchForImages(pythonExecutable, seed, maximumResults, dataFileName, maxCenterRange, maxRange);
 
                 return;
 
