@@ -3,10 +3,11 @@ using System.IO;
 
 namespace MandelbrotSet
 {
-    class Program
+    public class Program
     {
 
         private const string dataFileName = "tmp_data.dat";
+        public const string saveImageAsProgramFileName = "saveimageas.py";
 
         enum Mode
         {
@@ -14,10 +15,11 @@ namespace MandelbrotSet
             DontVisualise,
             Distributed_Server,
             Distributed_Client,
-            Generate_PPM
+            Generate_PPM,
+            ImageSearching
         }
 
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
 
             Mode mode;
@@ -25,7 +27,69 @@ namespace MandelbrotSet
             ulong maximumRecursionDepth;
             ulong bufferSize;
 
-            if (args.Length == 4)
+            if (args.Length == 3) //Image searching with less parameters
+            {
+
+                mode = ParseMode(args[0]);
+
+                if (mode != Mode.ImageSearching)
+                {
+                    Console.WriteLine("Only use 3 arguments when trying to use image searching");
+                    return;
+                }
+
+                if (!int.TryParse(args[1], out int seed))
+                {
+                    Console.WriteLine("Invalid seed provided");
+                }
+
+                if (!int.TryParse(args[2], out int maximumResults))
+                {
+                    Console.WriteLine("Invalid maximum results passed");
+                }
+
+                ImageSearching.SearchForImages(seed, maximumResults, dataFileName);
+
+                return;
+
+            }
+            else if (args.Length == 5) //Image searching with more parameters
+            {
+
+                mode = ParseMode(args[0]);
+
+                if (mode != Mode.ImageSearching)
+                {
+                    Console.WriteLine("Only use 5 arguments when trying to use image searching");
+                    return;
+                }
+
+                if (!int.TryParse(args[1], out int seed))
+                {
+                    Console.WriteLine("Invalid seed provided");
+                }
+
+                if (!int.TryParse(args[2], out int maximumResults))
+                {
+                    Console.WriteLine("Invalid maximum results passed");
+                }
+
+                if (!double.TryParse(args[3], out double maxCenterRange))
+                {
+                    Console.WriteLine("Invalid maximum center range passed");
+                }
+
+                if (!double.TryParse(args[4], out double maxRange))
+                {
+                    Console.WriteLine("Invalid maximum range passed");
+                }
+
+                ImageSearching.SearchForImages(seed, maximumResults, dataFileName, maxCenterRange, maxRange);
+
+                return;
+
+            }
+            else if (args.Length == 4)
             {
 
                 mode = ParseMode(args[0]);
@@ -176,7 +240,7 @@ namespace MandelbrotSet
 
         }
 
-        private static void GetGenerationParametersFromCenterRange(double centerR,
+        public static void GetGenerationParametersFromCenterRange(double centerR,
             double centerI,
             double range,
             ushort definition, //How many calculated points per row/column
@@ -235,6 +299,11 @@ namespace MandelbrotSet
                 case "genppm":
                     return Mode.Generate_PPM;
 
+                case "is":
+                case "search":
+                case "image-search":
+                    return Mode.ImageSearching;
+
                 default:
                     throw new ArgumentException("Invalid input format");
 
@@ -266,7 +335,7 @@ namespace MandelbrotSet
 
         }
 
-        private static void Run_Standard(double minR,
+        public static void Run_Standard(double minR,
             double maxR,
             double stepR,
             double minI,

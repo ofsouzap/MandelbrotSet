@@ -6,6 +6,8 @@ from PIL import ImageTk, Image;
 from os import system as call;
 from os.path import isfile;
 
+import saveimageas;
+
 IMAGE_SIZE = (512,512);
 
 DEFAULT_RECENT_SETTINGS = ("0", "0", "1", "128", "128", "max", "jet-inverse");
@@ -85,7 +87,7 @@ def on_save_image_button_press():
                                             defaultextension=SAVE_AS_FILE_TYPES,
                                             initialfile = f"{centerr},{centeri} range {range}");
 
-    open_image().save(filename);
+    saveimageas.save_image_as(IMAGE_FILENAME, filename);
 
 def open_image():
     return Image.open(IMAGE_FILENAME);
