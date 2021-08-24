@@ -9,7 +9,7 @@ namespace MandelbrotSet
     public static class ImageSearching
     {
 
-        private const ushort imageSearchingGenerationDefinition = 128;
+        private const ushort imageSearchingGenerationDefinition = 256;
 
         public static class SuitabilityChecks
         {
